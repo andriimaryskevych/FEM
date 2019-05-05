@@ -10,7 +10,7 @@ namespace FEM
             {1, new int[]{2,0,0} },
             {2, new int[]{2,2,0} },
             {3, new int[]{0,2,0} },
-            
+
             {4, new int[]{0,0,2} },
             {5, new int[]{2,0,2} },
             {6, new int[]{2,2,2} },
@@ -20,12 +20,12 @@ namespace FEM
             {9,  new int[]{2,1,0} },
             {10, new int[]{1,2,0} },
             {11, new int[]{0,1,0} },
-            
+
             {12, new int[]{0,0,1} },
             {13, new int[]{2,0,1} },
             {14, new int[]{2,2,1} },
             {15, new int[]{0,2,1} },
-            
+
             {16, new int[]{1,0,2} },
             {17, new int[]{2,1,2} },
             {18, new int[]{1,2,2} },
@@ -110,7 +110,7 @@ namespace FEM
                 for (int j = 0; j < 3; j++)
                 {
                     res[counter] = new double[] { val[i], val[j]};
-                    ++counter;                    
+                    ++counter;
                 }
             }
 

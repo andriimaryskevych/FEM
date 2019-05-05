@@ -72,7 +72,7 @@ namespace FEM
         private double SCALE_Z;
 
         private double[] U;
-        private double[][] TENSOR; 
+        private double[][] TENSOR;
         public FiniteElementMethod(Parameters parameters)
         {
             x = parameters.sizeX;
@@ -226,7 +226,7 @@ namespace FEM
         }
 
         private void createNT()
-        {            
+        {
             for (int figure = 0; figure < nel; figure++)
             {
                 int current_element = figure;
@@ -396,7 +396,7 @@ namespace FEM
                                     sum += (
                                             ( lam * (1 - v) * (dfixyz[counter, i, 0] * dfixyz[counter, j, 0]) )
                                             +
-                                            ( mu * (dfixyz[counter, i, 1] * dfixyz[counter, j, 1] + dfixyz[counter, i, 2] * dfixyz[counter, j, 2])) 
+                                            ( mu * (dfixyz[counter, i, 1] * dfixyz[counter, j, 1] + dfixyz[counter, i, 2] * dfixyz[counter, j, 2]))
                                         ) * Math.Abs(dj[counter]) * c[m] * c[l] * c[k];
                                     ++counter;
                                 }
@@ -488,7 +488,7 @@ namespace FEM
             for (int i = 0; i < 20; i++)
             {
                 for (int j = 0; j < 20; j++)
-                {                    
+                {
                     double sum = 0;
                     int counter = 0;
                     for (int k = 0; k < 3; k++)
@@ -500,14 +500,14 @@ namespace FEM
                                 sum += (
                                     ( lam * v * (dfixyz[counter, i, 0] * dfixyz[counter, j, 1]) )
                                       +
-                                    ( mu * (dfixyz[counter, i, 1] * dfixyz[counter, j, 0]) )    
+                                    ( mu * (dfixyz[counter, i, 1] * dfixyz[counter, j, 0]) )
                                     ) * Math.Abs(dj[counter]) * c[m] * c[l] * c[k];
                                 ++counter;
                             }
                         }
                     }
                     res[i, j] = sum;
-                    
+
                 }
             }
             return res;
@@ -596,7 +596,7 @@ namespace FEM
                     {
                         return false;
                     }
-                }                  
+                }
             }
             return true;
         }
@@ -620,7 +620,7 @@ namespace FEM
             {
                 index = ZU[i] * 3;
                 for (int j = 0; j < 3; j++)
-                {                    
+                {
                     MG[index + j, index + j] = Globals.BIG_NUMBER;
                 }
             }
@@ -686,7 +686,7 @@ namespace FEM
                 }
 
                 // not the best code below
-                
+
                 double[] f2 = new double[8];
 
                 for (int i = 0; i < 8; i++)
@@ -697,7 +697,7 @@ namespace FEM
                     {
                         for (int n = 0; n < 3; n++)
                         {
-                            sum += presure * 
+                            sum += presure *
                                 (DXYZET[0, 0, counter] * DXYZET[1, 1, counter] - DXYZET[1, 0, counter] * DXYZET[0, 1, counter]) *
                                 PSIET[i, counter]
                                 * c[n] * c[m];
@@ -719,7 +719,7 @@ namespace FEM
         private void getResult()
         {
             U = Gaussian.Solve(MG, F);
-            
+
             double[][] AKTres = new double[nqp][];
             for (int i = 0; i < nqp; i++)
             {
@@ -802,7 +802,7 @@ namespace FEM
                         }
                     }
                 }
-                
+
                 // calc dfixyz
                 // col is free column
                 double[] col = new double[3];
@@ -857,7 +857,7 @@ namespace FEM
                             SUM[coordinates[i]][j, k] += duxyz[i, j, k];
                         }
                     }
-                }            
+                }
             }
 
             // get the avarage for each point

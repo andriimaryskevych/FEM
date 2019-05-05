@@ -25,7 +25,7 @@ namespace FEM
         {
             double result;
             double[] coord = adapter[i];
-            result = ONE_FOURTH * 
+            result = ONE_FOURTH *
                      (1.0 + tau * coord[1]) *
                      coord[0] *
                      (2.0 * eta * coord[0] + tau * coord[1]);
@@ -78,7 +78,7 @@ namespace FEM
             return result;
         }
 
-        // functinons delegate calculation to more specified functions depending on their index 
+        // functinons delegate calculation to more specified functions depending on their index
         private static double diEta(int i, double eta, double tau)
         {
             return i < 4 ? diEtaFirst(i, eta, tau) : (i == 4 || i == 6) ? diEtaSecond(i, eta, tau) : diEtaThird(i, eta, tau);

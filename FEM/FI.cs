@@ -43,7 +43,7 @@ namespace FEM
             return i < 8 ? firstFi(i, alpha, beta, gamma) : secondFi(i, alpha, beta, gamma);
         }
 
-        // functions that calculated deriviates 
+        // functions that calculated deriviates
         public static double diAlphaFirst(int i, double alpha, double beta, double gamma)
         {
             double result;
@@ -117,7 +117,7 @@ namespace FEM
             return result;
         }
 
-        // functinons delegate calculation to more specified functions depending on their index 
+        // functinons delegate calculation to more specified functions depending on their index
         private static double diAlpha(int i, double alpha, double beta, double gamma)
         {
             return i < 8 ? diAlphaFirst(i, alpha, beta, gamma) : diAlphaSecond(i, alpha, beta, gamma);
