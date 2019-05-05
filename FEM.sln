@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FEM", "FEM\FEM.csproj", "{91DFC8A7-DE92-4C04-93C1-D1C8CA1CA0AE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91DFC8A7-DE92-4C04-93C1-D1C8CA1CA0AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91DFC8A7-DE92-4C04-93C1-D1C8CA1CA0AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91DFC8A7-DE92-4C04-93C1-D1C8CA1CA0AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91DFC8A7-DE92-4C04-93C1-D1C8CA1CA0AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E95918F-BA8B-4CD5-9B33-B8AF0B0CBD1C}
+	EndGlobalSection
+EndGlobal
