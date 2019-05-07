@@ -99,7 +99,7 @@ namespace FEM
             fastenNodes();
             createF();
             exportMG_F();
-            visualizeMG();
+            // visualizeMG();
             getResult();
             createPressureVector();
             returnEndPositions();
@@ -583,6 +583,7 @@ namespace FEM
 
                     tw.WriteLine();
                 }
+
             }
 
             using (TextWriter tw = new StreamWriter("F.txt"))
@@ -597,6 +598,8 @@ namespace FEM
 
                 tw.WriteLine();
             }
+
+            Environment.Exit(1);
         }
 
         private void visualizeMG () {
