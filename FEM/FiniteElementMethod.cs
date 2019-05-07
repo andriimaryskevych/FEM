@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -97,6 +98,8 @@ namespace FEM
             getMG();
             fastenNodes();
             createF();
+            exportMG_F();
+            visualizeMG();
             getResult();
             createPressureVector();
             returnEndPositions();
@@ -560,6 +563,61 @@ namespace FEM
             }
 
             timer.LogTime("Generated F");
+        }
+
+        private void exportMG_F () {
+            Console.WriteLine("Writing to files");
+            int size = nqp * 3;
+
+            using (TextWriter tw = new StreamWriter("MG.txt"))
+            {
+                tw.Write(nqp * 3);
+                tw.WriteLine();
+
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < size; j++)
+                    {
+                        tw.Write(MG[i, j]+ " ");
+                    }
+
+                    tw.WriteLine();
+                }
+            }
+
+            using (TextWriter tw = new StreamWriter("F.txt"))
+            {
+                tw.Write(size);
+                tw.WriteLine();
+
+                for (int i = 0; i < nqp * 3; i++)
+                {
+                    tw.Write(F[i]+ " ");
+                }
+
+                tw.WriteLine();
+            }
+        }
+
+        private void visualizeMG () {
+            int size = nqp * 3;
+
+            Bitmap bmp = new Bitmap(size, size);
+
+            for (int j = 0; j < size; j++)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    if (MG[i, j] == 0) {
+                        bmp.SetPixel(i, j, Color.White);
+                    } else {
+                        bmp.SetPixel(i, j, Color.Black);
+                    }
+                }
+            }
+
+            bmp.Save("MG.bmp");
+            Console.WriteLine("Saved image");
         }
 
         private void getResult()
