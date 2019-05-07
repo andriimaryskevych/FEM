@@ -718,7 +718,7 @@ namespace FEM
 
         private void getResult()
         {
-            U = Gaussian.Solve(MG, F);
+            U = Extreme.Solve(MG, F);
 
             double[][] AKTres = new double[nqp][];
             for (int i = 0; i < nqp; i++)
