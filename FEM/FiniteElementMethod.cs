@@ -4,7 +4,8 @@ using System.Linq;
 using System.IO;
 using Newtonsoft.Json;
 using FEM.DTO;
-
+using Extreme.Mathematics;
+using Extreme.Mathematics.LinearAlgebra;
 namespace FEM
 {
     class FiniteElementMethod
@@ -58,8 +59,8 @@ namespace FEM
         // Same as AKT, FE number goes first than it's local value that evaluates to global coord of selected FE
         public int[][] NT;
 
-        public double[,] MG;
-        public double[] F;
+        public SparseCompressedColumnMatrix<double> MG;
+        public SparseVector<double> F;
 
         public int[] ZU;
         public double[,] ZP;
@@ -169,8 +170,10 @@ namespace FEM
         }
         private void initMatrix()
         {
-            MG = new double[3 * nqp, 3 * nqp];
-            F = new double[3 * nqp];
+            int size = nqp * 3;
+
+            MG = Matrix.CreateSparse<double>(size, size);
+            F = Vector.CreateSparse<double>(size);
         }
         private void createAKT()
         {
