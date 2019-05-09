@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using FEM.DTO;
 using Extreme.Mathematics;
@@ -256,13 +257,17 @@ namespace FEM
 
         private void getMG()
         {
+            Console.WriteLine("Start calculating MG");
             // defined once and used for each finite element
             double[,,] dxyzabg = new double[3, 3, 27];
             double[] dj = new double[27];
             double[,,] dfixyz = new double[27, 20, 3];
 
-            for (int number = 0; number < nel; number++)
-            {
+            double[][,][,] mge_storage = new double[nel][,][,];
+
+            object localLockObject = new object();
+
+            Parallel.For(0, nel, (number) => {
                 int[] coordinates = NT[number];
 
                 // calc dxyzabg
@@ -297,10 +302,11 @@ namespace FEM
                 for (int i = 0; i < 27; i++)
                 {
                     jak = new double[3, 3] {
-                    { dxyzabg[0,0,i], dxyzabg[1,0,i], dxyzabg[2,0,i] },
-                    { dxyzabg[0,1,i], dxyzabg[1,1,i], dxyzabg[2,1,i] },
-                    { dxyzabg[0,2,i], dxyzabg[1,2,i], dxyzabg[2,2,i] }
-                };
+                        { dxyzabg[0,0,i], dxyzabg[1,0,i], dxyzabg[2,0,i] },
+                        { dxyzabg[0,1,i], dxyzabg[1,1,i], dxyzabg[2,1,i] },
+                        { dxyzabg[0,2,i], dxyzabg[1,2,i], dxyzabg[2,2,i] }
+                    };
+
                     dj[i] = (
                                 jak[0, 0] * jak[1, 1] * jak[2, 2] +
                                 jak[0, 1] * jak[1, 2] * jak[2, 0] +
@@ -354,7 +360,14 @@ namespace FEM
                 mge[2, 0] = rotate(mge[0, 2]);
                 mge[2, 1] = rotate(mge[1, 2]);
 
+                mge_storage[number] = mge;
+            });
+
+            Console.WriteLine("Summing up");
+
+            for (int number = 0; number < nel; number++) {
                 int x, y, localX, localY, globalX, globalY;
+
                 for (int i = 0; i < 60; i++)
                 {
                     for (int j = 0; j < 60; j++)
@@ -368,11 +381,12 @@ namespace FEM
                         globalX = (NT[number][localX]) * 3 + x;
                         globalY = (NT[number][localY]) * 3 + y;
 
-                        MG[globalX, globalY] += mge[x, y][localX, localY];
+                        MG[globalX, globalY] += mge_storage[number][x, y][localX, localY];
                     }
                 }
-            };
-            Console.WriteLine("Got MG");
+            }
+
+            Console.WriteLine("End calculating MG");
         }
 
         private double[,] one_one(double[,,] dfixyz, double[] dj)
@@ -589,33 +603,6 @@ namespace FEM
             return res;
         }
 
-        private bool isSymetricMG()
-        {
-            for (int i = 0; i < 3 * nqp; i++)
-            {
-                for (int j = i; j < 3 * nqp; j++)
-                {
-                    if (MG[i, j] != MG[j, i])
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        private bool isMgGreaterThanZero()
-        {
-            for (int i = 0; i < nqp * 3; i++)
-            {
-                if (MG[i, i] < 0)
-                {
-                    Console.WriteLine(i);
-                }
-            }
-            return true;
-        }
-
         private void improveMG()
         {
             int index;
@@ -653,7 +640,7 @@ namespace FEM
 
             int site = 5;
 
-            int loadElementsCount = m * n;
+            int loadElementsCount = 1;
             int start = nel - loadElementsCount;
             for (int number = start; number < nel; number++)
             {

@@ -12,6 +12,10 @@ namespace FEM
             IParameterExtractor extractor = ParameterExtraction.GetExtractor();
             Parameters parameters = extractor.extract();
 
+            Console.WriteLine(parameters.sizeX);
+            Console.WriteLine(parameters.sizeY);
+            Console.WriteLine(parameters.sizeZ);
+
             new FiniteElementMethod(parameters).Start();
         }
     }
