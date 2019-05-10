@@ -63,7 +63,7 @@ namespace FEM
         public SparseVector<double> F;
 
         public int[] ZU;
-        public double[,] ZP;
+        public double[][] ZP;
 
         public double[,,] DPSITE = Globals.DPSITE;
         public double[,] PSIET;
@@ -218,13 +218,15 @@ namespace FEM
         private void createZP()
         {
             int loadElementsCount = m * n;
-            ZP = new double[loadElementsCount, 3];
+            ZP = new double[loadElementsCount][];
             int firstOne = nel - loadElementsCount;
             for (int i = firstOne, counter = 0; i < nel; i++, counter++)
             {
-                ZP[counter, 0] = i;
-                ZP[counter, 1] = 5;
-                ZP[counter, 2] = 10;
+                ZP[counter] = new double[3];
+
+                ZP[counter][0] = i;
+                ZP[counter][1] = 5;
+                ZP[counter][2] = presure;
             }
         }
 
@@ -651,12 +653,15 @@ namespace FEM
         {
             double[,,] DXYZET;
 
-            int site = 5;
+            int site, number;
+            double elementPressure;
 
-            int loadElementsCount = m * n;
-            int start = nel - loadElementsCount;
-            for (int number = start; number < nel; number++)
+            for (int num = 0; num < ZP.Length; num++)
             {
+                number = (int)ZP[num][0];
+                site = (int)ZP[num][1];
+                elementPressure = ZP[num][2];
+
                 DXYZET = new double[3, 2, 9];
 
                 int[] coordinates = NT[number];
@@ -700,7 +705,7 @@ namespace FEM
                     {
                         for (int n = 0; n < 3; n++)
                         {
-                            sum += presure *
+                            sum += elementPressure *
                                 (DXYZET[0, 0, counter] * DXYZET[1, 1, counter] - DXYZET[1, 0, counter] * DXYZET[0, 1, counter]) *
                                 PSIET[i, counter]
                                 * c[n] * c[m];
