@@ -10,11 +10,7 @@ namespace FEM
     {
         public static double[] Solve(SparseCompressedColumnMatrix<double> A, SparseVector<double> b)
         {
-            Console.WriteLine("Start Ax=B");
-            IterativeSparseSolver<double> solver = new BiConjugateGradientSolver<double>(A);
-            Console.WriteLine("End Ax=B");
-
-            return solver.Solve(b).ToArray();
+            return new BiConjugateGradientSolver<double>(A).Solve(b).ToArray();
         }
     }
 }

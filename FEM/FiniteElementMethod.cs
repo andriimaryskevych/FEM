@@ -10,6 +10,8 @@ namespace FEM
 {
     class FiniteElementMethod
     {
+        private TimeLogger timer;
+        private TimeLogger global;
         // this one holds all the points
         // when i devide a kube in 2x2x2 parts it's size beacames 5x5x5 * 3
         // to use only primitives, i decidet to store 5x5x5 vectors of length 3
@@ -63,7 +65,7 @@ namespace FEM
         public SparseVector<double> F;
 
         public int[] ZU;
-        public double[,] ZP;
+        public double[][] ZP;
 
         public double[,,] DPSITE = Globals.DPSITE;
         public double[,] PSIET;
@@ -76,6 +78,9 @@ namespace FEM
         private double[][] TENSOR;
         public FiniteElementMethod(Parameters parameters)
         {
+            timer = new TimeLogger();
+            global = new TimeLogger();
+
             x = parameters.sizeX;
             y = parameters.sizeY;
             z = parameters.sizeZ;
@@ -172,7 +177,7 @@ namespace FEM
         {
             int size = nqp * 3;
 
-            MG = Matrix.CreateSparse<double>(size, size);
+            MG = Matrix.CreateSparseSymmetric<double>(size, 0.05);
             F = Vector.CreateSparse<double>(size);
         }
         private void createAKT()
@@ -203,7 +208,7 @@ namespace FEM
                 sw.WriteLine(JsonConvert.SerializeObject((from a in AKT select new { x = a[0], y = a[1], z = a[2], })));
             }
 
-            Console.Write("Generated start.txt");
+            timer.LogTime("Generated mesh, ATK, start.txt");
         }
 
         private void createZU()
@@ -218,13 +223,15 @@ namespace FEM
         private void createZP()
         {
             int loadElementsCount = m * n;
-            ZP = new double[loadElementsCount, 3];
+            ZP = new double[loadElementsCount][];
             int firstOne = nel - loadElementsCount;
             for (int i = firstOne, counter = 0; i < nel; i++, counter++)
             {
-                ZP[counter, 0] = i;
-                ZP[counter, 1] = 5;
-                ZP[counter, 2] = 10;
+                ZP[counter] = new double[3];
+
+                ZP[counter][0] = i;
+                ZP[counter][1] = 5;
+                ZP[counter][2] = presure;
             }
         }
 
@@ -254,110 +261,122 @@ namespace FEM
             NT[belongElementNumber] = globalCoordinates;
         }
 
+        private double[,][,] getMGE() {
+            double[,,] dxyzabg = new double[3, 3, 27];
+            double[] dj = new double[27];
+            double[,,] dfixyz = new double[27, 20, 3];
+
+            int number = 0;
+            int[] coordinates = NT[number];
+
+            // calc dxyzabg
+            double globalCoordinate = 0;
+            double diFi = 0;
+            double sum = 0;
+
+            // i stands for global coordinate
+            // j for local
+            // k for gaussNode
+            // l for i-th function
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    for (int k = 0; k < 27; k++)
+                    {
+                        sum = 0;
+                        for (int l = 0; l < 20; l++)
+                        {
+                            globalCoordinate = AKT[coordinates[l]][i];
+                            diFi = DFIABG[k, j, l];
+                            sum += globalCoordinate * diFi;
+                        }
+                        dxyzabg[i, j, k] = sum;
+                    }
+                }
+            }
+
+            // calc dj
+            double[,] jak;
+            for (int i = 0; i < 27; i++)
+            {
+                jak = new double[3, 3] {
+                { dxyzabg[0,0,i], dxyzabg[1,0,i], dxyzabg[2,0,i] },
+                { dxyzabg[0,1,i], dxyzabg[1,1,i], dxyzabg[2,1,i] },
+                { dxyzabg[0,2,i], dxyzabg[1,2,i], dxyzabg[2,2,i] }
+            };
+                dj[i] = (
+                            jak[0, 0] * jak[1, 1] * jak[2, 2] +
+                            jak[0, 1] * jak[1, 2] * jak[2, 0] +
+                            jak[0, 2] * jak[1, 0] * jak[2, 1]
+                        ) -
+                        (
+                            jak[0, 2] * jak[1, 1] * jak[2, 0] +
+                            jak[0, 1] * jak[1, 0] * jak[2, 2] +
+                            jak[0, 0] * jak[1, 2] * jak[2, 1]
+                        );
+            }
+
+            // calc dfixyz
+            // col is free column
+            double[] col = new double[3];
+            // i stands for gausNode
+            // phi stands for i-th function
+            for (int i = 0; i < 27; i++)
+            {
+                for (int phi = 0; phi < 20; phi++)
+                {
+                    for (int k = 0; k < 3; k++)
+                    {
+                        col[k] = DFIABG[i, k, phi];
+                    }
+                    double[,] matrix = new double[3, 3] {
+                        { dxyzabg[0,0,i], dxyzabg[1,0,i], dxyzabg[2,0,i] },
+                        { dxyzabg[0,1,i], dxyzabg[1,1,i], dxyzabg[2,1,i] },
+                        { dxyzabg[0,2,i], dxyzabg[1,2,i], dxyzabg[2,2,i] }
+                    };
+                    double[] gaussianSolve = Gaussian.Solve(matrix, col);
+
+                    for (int k = 0; k < 3; k++)
+                    {
+                        dfixyz[i, phi, k] = gaussianSolve[k];
+                    }
+                }
+            }
+
+            double[,][,] mge = new double[3, 3][,];
+
+            mge[0, 0] = one_one(dfixyz, dj);
+            mge[1, 1] = two_two(dfixyz, dj);
+            mge[2, 2] = three_three(dfixyz, dj);
+
+            mge[0, 1] = one_two(dfixyz, dj);
+            mge[0, 2] = one_three(dfixyz, dj);
+            mge[1, 2] = two_three(dfixyz, dj);
+
+            return mge;
+        }
+
         private void getMG()
         {
+            timer.LogTime("Generated ZU, ZP, NT");
+
             // defined once and used for each finite element
             double[,,] dxyzabg = new double[3, 3, 27];
             double[] dj = new double[27];
             double[,,] dfixyz = new double[27, 20, 3];
 
+            // As all elements are the same,
+            // Calculating MGE only once
+            double[,][,] mge = getMGE();
+            timer.LogTime("Generated MGE");
+
             for (int number = 0; number < nel; number++)
             {
-                int[] coordinates = NT[number];
-
-                // calc dxyzabg
-                double globalCoordinate = 0;
-                double diFi = 0;
-                double sum = 0;
-
-                // i stands for global coordinate
-                // j for local
-                // k for gaussNode
-                // l for i-th function
-                for (int i = 0; i < 3; i++)
-                {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        for (int k = 0; k < 27; k++)
-                        {
-                            sum = 0;
-                            for (int l = 0; l < 20; l++)
-                            {
-                                globalCoordinate = AKT[coordinates[l]][i];
-                                diFi = DFIABG[k, j, l];
-                                sum += globalCoordinate * diFi;
-                            }
-                            dxyzabg[i, j, k] = sum;
-                        }
-                    }
-                }
-
-                // calc dj
-                double[,] jak;
-                for (int i = 0; i < 27; i++)
-                {
-                    jak = new double[3, 3] {
-                    { dxyzabg[0,0,i], dxyzabg[1,0,i], dxyzabg[2,0,i] },
-                    { dxyzabg[0,1,i], dxyzabg[1,1,i], dxyzabg[2,1,i] },
-                    { dxyzabg[0,2,i], dxyzabg[1,2,i], dxyzabg[2,2,i] }
-                };
-                    dj[i] = (
-                                jak[0, 0] * jak[1, 1] * jak[2, 2] +
-                                jak[0, 1] * jak[1, 2] * jak[2, 0] +
-                                jak[0, 2] * jak[1, 0] * jak[2, 1]
-                            ) -
-                            (
-                                jak[0, 2] * jak[1, 1] * jak[2, 0] +
-                                jak[0, 1] * jak[1, 0] * jak[2, 2] +
-                                jak[0, 0] * jak[1, 2] * jak[2, 1]
-                            );
-                }
-
-                // calc dfixyz
-                // col is free column
-                double[] col = new double[3];
-                // i stands for gausNode
-                // phi stands for i-th function
-                for (int i = 0; i < 27; i++)
-                {
-                    for (int phi = 0; phi < 20; phi++)
-                    {
-                        for (int k = 0; k < 3; k++)
-                        {
-                            col[k] = DFIABG[i, k, phi];
-                        }
-                        double[,] matrix = new double[3, 3] {
-                            { dxyzabg[0,0,i], dxyzabg[1,0,i], dxyzabg[2,0,i] },
-                            { dxyzabg[0,1,i], dxyzabg[1,1,i], dxyzabg[2,1,i] },
-                            { dxyzabg[0,2,i], dxyzabg[1,2,i], dxyzabg[2,2,i] }
-                        };
-                        double[] gaussianSolve = Gaussian.Solve(matrix, col);
-
-                        for (int k = 0; k < 3; k++)
-                        {
-                            dfixyz[i, phi, k] = gaussianSolve[k];
-                        }
-                    }
-                }
-
-                double[,][,] mge = new double[3, 3][,];
-
-                mge[0, 0] = one_one(dfixyz, dj);
-                mge[1, 1] = two_two(dfixyz, dj);
-                mge[2, 2] = three_three(dfixyz, dj);
-
-                mge[0, 1] = one_two(dfixyz, dj);
-                mge[0, 2] = one_three(dfixyz, dj);
-                mge[1, 2] = two_three(dfixyz, dj);
-
-                mge[1, 0] = rotate(mge[0, 1]);
-                mge[2, 0] = rotate(mge[0, 2]);
-                mge[2, 1] = rotate(mge[1, 2]);
-
                 int x, y, localX, localY, globalX, globalY;
                 for (int i = 0; i < 60; i++)
                 {
-                    for (int j = 0; j < 60; j++)
+                    for (int j = i; j < 60; j++)
                     {
                         x = i / 20;
                         y = j / 20;
@@ -372,7 +391,8 @@ namespace FEM
                     }
                 }
             };
-            Console.WriteLine("Got MG");
+
+            timer.LogTime("Generated MG");
         }
 
         private double[,] one_one(double[,,] dfixyz, double[] dj)
@@ -384,7 +404,7 @@ namespace FEM
                 {
                     if (i > j)
                     {
-                        res[i, j] = res[j, i];
+                        res[i, j] = 0;
                     }
                     else
                     {
@@ -420,7 +440,7 @@ namespace FEM
                 {
                     if (i > j)
                     {
-                        res[i, j] = res[j, i];
+                        res[i, j] = 0;
                     }
                     else
                     {
@@ -457,7 +477,7 @@ namespace FEM
                 {
                     if (i > j)
                     {
-                        res[i, j] = res[j, i];
+                        res[i, j] = 0;
                     }
                     else
                     {
@@ -576,46 +596,6 @@ namespace FEM
             return res;
         }
 
-        private double[,] rotate(double[,] toRotate)
-        {
-            double[,] res = new double[20, 20];
-            for (int i = 0; i < 20; i++)
-            {
-                for (int j = 0; j < 20; j++)
-                {
-                    res[i, j] = toRotate[j, i];
-                }
-            }
-            return res;
-        }
-
-        private bool isSymetricMG()
-        {
-            for (int i = 0; i < 3 * nqp; i++)
-            {
-                for (int j = i; j < 3 * nqp; j++)
-                {
-                    if (MG[i, j] != MG[j, i])
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        private bool isMgGreaterThanZero()
-        {
-            for (int i = 0; i < nqp * 3; i++)
-            {
-                if (MG[i, i] < 0)
-                {
-                    Console.WriteLine(i);
-                }
-            }
-            return true;
-        }
-
         private void improveMG()
         {
             int index;
@@ -651,12 +631,15 @@ namespace FEM
         {
             double[,,] DXYZET;
 
-            int site = 5;
+            int site, number;
+            double elementPressure;
 
-            int loadElementsCount = m * n;
-            int start = nel - loadElementsCount;
-            for (int number = start; number < nel; number++)
+            for (int num = 0; num < ZP.Length; num++)
             {
+                number = (int)ZP[num][0];
+                site = (int)ZP[num][1];
+                elementPressure = ZP[num][2];
+
                 DXYZET = new double[3, 2, 9];
 
                 int[] coordinates = NT[number];
@@ -700,7 +683,7 @@ namespace FEM
                     {
                         for (int n = 0; n < 3; n++)
                         {
-                            sum += presure *
+                            sum += elementPressure *
                                 (DXYZET[0, 0, counter] * DXYZET[1, 1, counter] - DXYZET[1, 0, counter] * DXYZET[0, 1, counter]) *
                                 PSIET[i, counter]
                                 * c[n] * c[m];
@@ -715,13 +698,14 @@ namespace FEM
                     F[coordinates[PAdapter[site][i]] * 3 + 2] += f2[i];
                 }
             }
-            Console.WriteLine("Got F");
-            Console.WriteLine(nqp);
+
+            timer.LogTime("Generated F");
         }
 
         private void getResult()
         {
             U = Extreme.Solve(MG, F);
+            timer.LogTime("Solved Ax=B");
 
             double[][] AKTres = new double[nqp][];
             for (int i = 0; i < nqp; i++)
@@ -736,7 +720,8 @@ namespace FEM
                 sw.WriteLine(JsonConvert.SerializeObject((from a in AKTres select new { x = a[0], y = a[1], z = a[2], })));
             }
 
-            Console.Write("Generated points.txt");
+            timer.LogTime("Generated points.txt");
+            global.LogTime("Finished solving");
         }
 
         private void createPressureVector()
