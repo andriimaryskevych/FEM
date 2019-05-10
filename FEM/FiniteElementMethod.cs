@@ -267,7 +267,8 @@ namespace FEM
 
             object localLockObject = new object();
 
-            Parallel.For(0, nel, (number) => {
+            // Parallel.For(0, nel, (number) =>
+            for (int number = 0; number < nel; number++) {
                 int[] coordinates = NT[number];
 
                 // calc dxyzabg
@@ -356,12 +357,8 @@ namespace FEM
                 mge[0, 2] = one_three(dfixyz, dj);
                 mge[1, 2] = two_three(dfixyz, dj);
 
-                mge[1, 0] = rotate(mge[0, 1]);
-                mge[2, 0] = rotate(mge[0, 2]);
-                mge[2, 1] = rotate(mge[1, 2]);
-
                 mge_storage[number] = mge;
-            });
+            };
 
             Console.WriteLine("Summing up");
 
@@ -370,13 +367,21 @@ namespace FEM
 
                 for (int i = 0; i < 60; i++)
                 {
-                    for (int j = 0; j < 60; j++)
+                    for (int j = i; j < 60; j++)
                     {
-                        x = i / 20;
-                        y = j / 20;
+                        if (i > j) {
+                            x = j / 20;
+                            y = i / 20;
 
-                        localX = i % 20;
-                        localY = j % 20;
+                            localX = j % 20;
+                            localY = i % 20;
+                        } else {
+                            x = i / 20;
+                            y = j / 20;
+
+                            localX = i % 20;
+                            localY = j % 20;
+                        }
 
                         globalX = (NT[number][localX]) * 3 + x;
                         globalY = (NT[number][localY]) * 3 + y;
@@ -398,7 +403,7 @@ namespace FEM
                 {
                     if (i > j)
                     {
-                        res[i, j] = res[j, i];
+                        res[i, j] = 0;
                     }
                     else
                     {
@@ -434,7 +439,7 @@ namespace FEM
                 {
                     if (i > j)
                     {
-                        res[i, j] = res[j, i];
+                        res[i, j] = 0;
                     }
                     else
                     {
@@ -471,7 +476,7 @@ namespace FEM
                 {
                     if (i > j)
                     {
-                        res[i, j] = res[j, i];
+                        res[i, j] = 0;
                     }
                     else
                     {
