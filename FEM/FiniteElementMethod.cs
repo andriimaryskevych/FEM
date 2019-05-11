@@ -217,7 +217,7 @@ namespace FEM
             List<int> points = new List<int>();
 
             for (int i = 0; i < nqp; i++) {
-                if (AKT[i][0] == 0) {
+                if (AKT[i][1] == 0) {
                     points.Add(i);
                 }
             }
@@ -226,7 +226,10 @@ namespace FEM
         }
         private void createZP()
         {
-            int[] loadedFENumbers = Enumerable.Range(0, nel).Where((number) => number % m == 1).ToArray();
+            int[] loadedFENumbers = Enumerable.Range(0, nel).Where((number) => {
+                int withoutZ = (number) % (m * n);
+                return withoutZ / n == m - 1;
+            }).ToArray();
 
             ZP = new double[loadedFENumbers.Length][];
 
@@ -235,7 +238,7 @@ namespace FEM
                 ZP[i] = new double[3];
 
                 ZP[i][0] = loadedFENumbers[i];
-                ZP[i][1] = 1;
+                ZP[i][1] = 2;
                 ZP[i][2] = presure;
             }
         }
@@ -716,7 +719,7 @@ namespace FEM
                         for (int n = 0; n < 3; n++)
                         {
                             sum += elementPressure *
-                                (DXYZET[1, 0, counter] * DXYZET[2, 1, counter] - DXYZET[2, 0, counter] * DXYZET[1, 1, counter]) *
+                                (DXYZET[2, 0, counter] * DXYZET[0, 1, counter] - DXYZET[0, 0, counter] * DXYZET[2, 1, counter]) *
                                 PSIET[i, counter]
                                 * c[n] * c[m];
                             ++counter;
@@ -727,7 +730,7 @@ namespace FEM
 
                 for (int i = 0; i < 8; i++)
                 {
-                    F[coordinates[PAdapter[site][i]] * 3 + 2] += f2[i];
+                    F[coordinates[PAdapter[site][i]] * 3 + 1] += f2[i];
                 }
             }
             Console.WriteLine("Got F");
