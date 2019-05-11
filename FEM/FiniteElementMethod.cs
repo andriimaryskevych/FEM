@@ -217,16 +217,17 @@ namespace FEM
         }
         private void createZP()
         {
-            int loadElementsCount = m * n;
-            ZP = new double[loadElementsCount][];
-            int firstOne = nel - loadElementsCount;
-            for (int i = firstOne, counter = 0; i < nel; i++, counter++)
-            {
-                ZP[counter] = new double[3];
+            int[] loadedFENumbers = Enumerable.Range(0, nel).Where((number) => number % m == 1).ToArray();
 
-                ZP[counter][0] = i;
-                ZP[counter][1] = 5;
-                ZP[counter][2] = presure;
+            ZP = new double[loadedFENumbers.Length][];
+
+            for (int i = 0; i < ZP.Length; i++)
+            {
+                ZP[i] = new double[3];
+
+                ZP[i][0] = loadedFENumbers[i];
+                ZP[i][1] = 1;
+                ZP[i][2] = presure;
             }
         }
 
@@ -706,7 +707,7 @@ namespace FEM
                         for (int n = 0; n < 3; n++)
                         {
                             sum += elementPressure *
-                                (DXYZET[0, 0, counter] * DXYZET[1, 1, counter] - DXYZET[1, 0, counter] * DXYZET[0, 1, counter]) *
+                                (DXYZET[1, 0, counter] * DXYZET[2, 1, counter] - DXYZET[2, 0, counter] * DXYZET[1, 1, counter]) *
                                 PSIET[i, counter]
                                 * c[n] * c[m];
                             ++counter;
