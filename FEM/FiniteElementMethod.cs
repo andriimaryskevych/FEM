@@ -87,7 +87,8 @@ namespace FEM
 
         public void Start()
         {
-            returnStartPositions();
+            timer.LogTime("Generated mesh, ATK, start.txt");
+
             createZU();
             createZP();
             getMG();
@@ -96,16 +97,6 @@ namespace FEM
             getResult();
             returnEndPositions();
             createPressureVector();
-        }
-
-        private void returnStartPositions()
-        {
-            using (StreamWriter sw = new StreamWriter("start.txt", false, System.Text.Encoding.Default))
-            {
-                sw.WriteLine(JsonConvert.SerializeObject((from a in AKT select new { x = a[0], y = a[1], z = a[2], })));
-            }
-
-            timer.LogTime("Generated mesh, ATK, start.txt");
         }
 
         private void createZU()
