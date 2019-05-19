@@ -1,4 +1,4 @@
-﻿namespace FEM
+﻿namespace FEM.Solvers
 {
     class Gaussian
     {

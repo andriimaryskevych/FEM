@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace FEM
+namespace FEM.Helpers
 {
     class TimeLogger
     {

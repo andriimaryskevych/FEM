@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using FEM.Base;
+using FEM.Helpers;
 
 namespace FEM
 {
@@ -118,7 +120,7 @@ namespace FEM
         }
         public static double[][] GaussNodes9 = smallGaussNodes();
 
-        private static double[,,] countDPSITE()
+        private static double[,,] countDPSIET()
         {
             double[,,] result = new double[9, 2, 8];
 
@@ -138,7 +140,27 @@ namespace FEM
 
             return result;
         }
-        public static double[,,] DPSITE = countDPSITE();
+        public static double[,,] DPSIET = countDPSIET();
+
+        private static double[,] countPSIET()
+        {
+            double[,] PSIET = new double[8, 9];
+
+            double[] values;
+            double[][] nodes = Globals.GaussNodes9;
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    values = nodes[j];
+                    PSIET[i,j] = PSI.getPsi(i, values[0], values[1]);
+                }
+            }
+
+            return PSIET;
+        }
+        public static double[,] PSIET = countPSIET();
 
         public static double BIG_NUMBER = Math.Pow(10, 20);
     }

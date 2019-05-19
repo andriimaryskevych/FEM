@@ -8,6 +8,6 @@ namespace FEM.Models
         public string JSON { get; set; }
 
         [Option('m', "mesh-only", Required = false, HelpText = "Should return mesh only?")]
-        public bool MeshOnly {get; set; }
+        public bool MeshOnly { get; set; }
     }
 }

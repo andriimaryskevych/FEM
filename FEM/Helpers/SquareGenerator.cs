@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FEM
+namespace FEM.Helpers
 {
     class SquareGenerator
     {

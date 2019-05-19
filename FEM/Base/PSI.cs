@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FEM
+namespace FEM.Base
 {
     class PSI
     {

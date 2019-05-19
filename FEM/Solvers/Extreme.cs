@@ -4,7 +4,7 @@ using Extreme.Mathematics.LinearAlgebra;
 using Extreme.Mathematics.LinearAlgebra.IterativeSolvers;
 using Extreme.Mathematics.LinearAlgebra.IterativeSolvers.Preconditioners;
 
-namespace FEM
+namespace FEM.Solvers
 {
     class Extreme
     {

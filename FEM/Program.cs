@@ -4,6 +4,7 @@ using FEM.Factories;
 using FEM.Interfaces.ParameterExtractor;
 using FEM.DTO;
 using FEM.Models;
+using FEM.Helpers;
 
 namespace FEM
 {
@@ -17,7 +18,8 @@ namespace FEM
             IParameterExtractor extractor = ParameterExtraction.GetExtractor(options);
             Parameters parameters = extractor.extract();
 
-            new FiniteElementMethod(parameters).Start();
+            Mesh mesh = new MeshCreator(parameters).GetMesh();
+            new FiniteElementMethod(parameters, mesh).Start();
         }
     }
 }

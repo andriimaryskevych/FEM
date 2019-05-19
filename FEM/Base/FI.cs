@@ -1,6 +1,7 @@
 ﻿using System;
+using FEM.Helpers;
 
-namespace FEM
+namespace FEM.Base
 {
     class FI
     {
@@ -12,36 +13,6 @@ namespace FEM
 
         public static double ONE_EIGHT = 0.125;
         public static double ONE_FOURTH = 0.25;
-
-        private static double firstFi(int i, double alpha, double beta, double gamma)
-        {
-            double result;
-            double[] coord = fi[i];
-            result = ONE_EIGHT *
-                (1 + alpha * coord[0]) *
-                (1 + beta * coord[1]) *
-                (1 + gamma * coord[2]) *
-                (alpha * coord[0] + beta * coord[1] + gamma * coord[2] - 2);
-
-            return result;
-        }
-        private static double secondFi(int i, double alpha, double beta, double gamma)
-        {
-            double result;
-            double[] coord = fi[i];
-            result = ONE_FOURTH *
-                (1 + alpha * coord[0]) *
-                (1 + beta * coord[1]) *
-                (1 + gamma * coord[2]) *
-                (1 - Math.Pow((alpha * coord[1] * coord[2]), 2) - Math.Pow((beta * coord[0] * coord[2]), 2) - Math.Pow((gamma * coord[0] * coord[1]), 2));
-
-            return result;
-        }
-        // calculates PHIi(A,B,G)
-        public static double getFi(int i, double alpha, double beta, double gamma)
-        {
-            return i < 8 ? firstFi(i, alpha, beta, gamma) : secondFi(i, alpha, beta, gamma);
-        }
 
         // functions that calculated deriviates
         public static double diAlphaFirst(int i, double alpha, double beta, double gamma)
@@ -131,7 +102,7 @@ namespace FEM
             return i < 8 ? diGammaFirst(i, alpha, beta, gamma) : diGammaSecond(i, alpha, beta, gamma);
         }
 
-        // calculates ( Di PHIi(A,B,G) ) / ( Di variable )
+        // calculates ( Di FIi(A,B,G) ) / ( Di variable )
         // variable 1 is Aplha and so on
         // it delegates execution depending on alpha beta gamma
         public static double getDiFi(int variable, int i, double alpha, double beta, double gamma)
