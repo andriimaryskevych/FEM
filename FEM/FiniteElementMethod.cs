@@ -217,7 +217,7 @@ namespace FEM
             List<int> points = new List<int>();
 
             for (int i = 0; i < nqp; i++) {
-                if (AKT[i][1] == 0) {
+                if (AKT[i][2] == 0) {
                     points.Add(i);
                 }
             }
@@ -228,7 +228,7 @@ namespace FEM
         {
             int[] loadedFENumbers = Enumerable.Range(0, nel).Where((number) => {
                 int withoutZ = (number) % (m * n);
-                return withoutZ / n == m - 1;
+                return withoutZ / n == 0;
             }).ToArray();
 
             ZP = new double[loadedFENumbers.Length][];
@@ -238,7 +238,7 @@ namespace FEM
                 ZP[i] = new double[3];
 
                 ZP[i][0] = loadedFENumbers[i];
-                ZP[i][1] = 2;
+                ZP[i][1] = 0;
                 ZP[i][2] = presure;
             }
         }
