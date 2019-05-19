@@ -102,15 +102,12 @@ namespace FEM
 
         private void createZU()
         {
-            List<int> points = new List<int>();
-
-            for (int i = 0; i < nqp; i++) {
-                if (AKT[i][0] == 0) {
-                    points.Add(i);
-                }
-             }
-
-            ZU = points.ToArray();
+            int i = 0;
+            while (AKT[i][2] == 0)
+            {
+                i++;
+            }
+            ZU = Enumerable.Range(0, i).ToArray();
         }
         private void createZP()
         {
