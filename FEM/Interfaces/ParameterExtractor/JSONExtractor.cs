@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using CommandLine;
 using FEM.DTO;
+using FEM.Models;
 
 namespace FEM.Interfaces.ParameterExtractor
 {
@@ -10,9 +12,10 @@ namespace FEM.Interfaces.ParameterExtractor
 
         public Parameters extract()
         {
-            String jsonString = Environment.GetCommandLineArgs().ToArray()[2];
+            CLIOptions options = new CLIOptions();
+            Parser.Default.ParseArguments<CLIOptions>(Environment.GetCommandLineArgs()).WithParsed<CLIOptions>(o => options = o);
 
-            Parameters parameters = Newtonsoft.Json.JsonConvert.DeserializeObject<Parameters>(jsonString);
+            Parameters parameters = Newtonsoft.Json.JsonConvert.DeserializeObject<Parameters>(options.JSON);
 
             return parameters;
         }
