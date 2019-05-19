@@ -8,6 +8,7 @@ using Extreme.Mathematics.LinearAlgebra;
 using FEM.DTO;
 using FEM.Solvers;
 using FEM.Helpers;
+using FEM.Models;
 
 namespace FEM
 {
@@ -474,6 +475,10 @@ namespace FEM
 
         private void createF()
         {
+            PressureConfig[] PressurePartsConfig = Globals.PressurePartsConfig;
+
+            // Pressure configurations
+            double[][] config = new double[6][];
             double[,,] DXYZET;
 
             int site, number;
@@ -484,6 +489,8 @@ namespace FEM
                 number = (int)ZP[num][0];
                 site = (int)ZP[num][1];
                 elementPressure = ZP[num][2];
+
+                PressureConfig current = PressurePartsConfig[site];
 
                 DXYZET = new double[3, 2, 9];
 
@@ -518,7 +525,7 @@ namespace FEM
 
                 // not the best code below
 
-                double[] f2 = new double[8];
+                double[] fe = new double[8];
 
                 for (int i = 0; i < 8; i++)
                 {
@@ -529,18 +536,23 @@ namespace FEM
                         for (int n = 0; n < 3; n++)
                         {
                             sum += elementPressure *
-                                (DXYZET[0, 0, counter] * DXYZET[1, 1, counter] - DXYZET[1, 0, counter] * DXYZET[0, 1, counter]) *
+                                (
+                                    DXYZET[current.dxyzabgIndexs[0, 0], current.dxyzabgIndexs[0, 1], counter] *
+                                    DXYZET[current.dxyzabgIndexs[1, 0], current.dxyzabgIndexs[1, 1], counter] -
+                                    DXYZET[current.dxyzabgIndexs[2, 0], current.dxyzabgIndexs[2, 1], counter] *
+                                    DXYZET[current.dxyzabgIndexs[3, 0], current.dxyzabgIndexs[3, 1], counter]) *
                                 PSIET[i, counter]
                                 * c[n] * c[m];
                             ++counter;
                         }
                     }
-                    f2[i] = sum;
+
+                    fe[i] = sum;
                 }
 
                 for (int i = 0; i < 8; i++)
                 {
-                    F[coordinates[PAdapter[site][i]] * 3 + 2] += f2[i];
+                    F[coordinates[PAdapter[site][i]] * 3 + current.axisAddition] += fe[i];
                 }
             }
 

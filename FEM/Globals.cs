@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FEM.Base;
 using FEM.Helpers;
+using FEM.Models;
 
 namespace FEM
 {
@@ -161,6 +162,50 @@ namespace FEM
             return PSIET;
         }
         public static double[,] PSIET = countPSIET();
+
+        private static PressureConfig[] getPressureConfig () {
+            PressureConfig[] a = new PressureConfig[6];
+
+            PressureConfig xAxis = new PressureConfig(
+                0,
+                new int[4,2] {
+                    {1, 0},
+                    {2, 1},
+                    {2, 0},
+                    {1, 1}
+                }
+            );
+
+            PressureConfig yAxis = new PressureConfig(
+                1,
+                new int[4,2] {
+                    {2, 0},
+                    {0, 1},
+                    {0, 0},
+                    {2, 1}
+                }
+            );
+
+            PressureConfig zAxis = new PressureConfig(
+                2,
+                new int[4,2] {
+                    {0, 0},
+                    {1, 1},
+                    {1, 0},
+                    {0, 1}
+                }
+            );
+
+            a[0] = yAxis;
+            a[1] = xAxis;
+            a[2] = yAxis;
+            a[3] = xAxis;
+            a[4] = zAxis;
+            a[5] = zAxis;
+
+            return a;
+        }
+        public static PressureConfig[] PressurePartsConfig = getPressureConfig();
 
         public static double BIG_NUMBER = Math.Pow(10, 20);
     }
