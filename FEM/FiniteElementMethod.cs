@@ -102,26 +102,30 @@ namespace FEM
 
         private void createZU()
         {
-            int i = 0;
-            while (AKT[i][2] == 0)
-            {
-                i++;
-            }
-            ZU = Enumerable.Range(0, i).ToArray();
+            List<int> points = new List<int>();
+
+            for (int i = 0; i < nqp; i++) {
+                if (AKT[i][0] == 0) {
+                    points.Add(i);
+                }
+             }
+
+            ZU = points.ToArray();
         }
         private void createZP()
         {
-            int loadElementsCount = m * n;
-            ZP = new double[loadElementsCount][];
-            int firstOne = nel - loadElementsCount;
-            for (int i = firstOne, counter = 0; i < nel; i++, counter++)
-            {
-                ZP[counter] = new double[3];
+            int[] loadedFENumbers = Enumerable.Range(0, nel).Where((number) => number % m == m - 1).ToArray();
 
-                ZP[counter][0] = i;
-                ZP[counter][1] = 5;
-                ZP[counter][2] = presure;
-            }
+            ZP = new double[loadedFENumbers.Length][];
+
+            for (int i = 0; i < ZP.Length; i++)
+             {
+                ZP[i] = new double[3];
+
+                ZP[i][0] = loadedFENumbers[i];
+                ZP[i][1] = 1;
+                ZP[i][2] = presure;
+             }
         }
 
         private double[,][,] getMGE() {
