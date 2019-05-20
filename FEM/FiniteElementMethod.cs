@@ -111,18 +111,34 @@ namespace FEM
         }
         private void createZP()
         {
-            int[] loadedFENumbers = Enumerable.Range(0, nel).Where((number) => number % m == m - 1).ToArray();
+            // int[] loadedFENumbers = Enumerable.Range(0, nel).Where((number) => number % m == m - 1).ToArray();
 
-            ZP = new double[loadedFENumbers.Length][];
+            int leftTopFront = m * n * (k - 1);
+            int rightTopFront = leftTopFront + (m - 1);
+            int rightTopBack = nel - 1;
+            int leftTopBack = rightTopBack - (m - 1);
 
-            for (int i = 0; i < ZP.Length; i++)
-             {
-                ZP[i] = new double[3];
+            ZP = new double[4][];
 
-                ZP[i][0] = loadedFENumbers[i];
-                ZP[i][1] = 1;
-                ZP[i][2] = presure;
-             }
+            ZP[0] = new double[3];
+            ZP[0][0] = leftTopFront;
+            ZP[0][1] = 3;
+            ZP[0][2] = presure;
+
+            ZP[1] = new double[3];
+            ZP[1][0] = rightTopFront;
+            ZP[1][1] = 0;
+            ZP[1][2] = presure;
+
+            ZP[2] = new double[3];
+            ZP[2][0] = rightTopBack;
+            ZP[2][1] = 1;
+            ZP[2][2] = presure;
+
+            ZP[3] = new double[3];
+            ZP[3][0] = leftTopBack;
+            ZP[3][1] = 2;
+            ZP[3][2] = presure;
         }
 
         private double[,][,] getMGE() {
