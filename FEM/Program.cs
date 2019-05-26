@@ -28,6 +28,8 @@ namespace FEM
                 sw.WriteLine(JsonConvert.SerializeObject(new Points(mesh.AKT, mesh.NT)));
             }
 
+            Console.WriteLine("start.txt");
+
             if (options.MeshOnly) {
                 Environment.Exit(0);
             }

@@ -88,7 +88,7 @@ namespace FEM
 
         public void Start()
         {
-            timer.LogTime("Generated mesh, ATK, start.txt");
+            timer.LogTime("Generated mesh, ATK");
 
             createZU();
             createZP();
