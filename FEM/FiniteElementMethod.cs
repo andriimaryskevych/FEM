@@ -743,16 +743,16 @@ namespace FEM
             }
         }
 
-        private double[] getSigma(double[,] u)
+        private double[] getSigma(double[,] duxyz)
         {
             double[] res = new double[6];
 
-            res[0] = lam * ( (1 - v) * u[0, 0] + v * (u[1, 1] + u[2, 2]) );
-            res[1] = lam * ( (1 - v) * u[1, 1] + v * (u[0, 0] + u[2, 2]) );
-            res[2] = lam * ( (1 - v) * u[2, 2] + v * (u[0, 0] + u[1, 1]) );
-            res[3] = mu * (u[0, 1] + u[1, 0]);
-            res[4] = mu * (u[1, 2] + u[2, 1]);
-            res[5] = mu * (u[0, 2] + u[2, 0]);
+            res[0] = lam * ( (1 - v) * duxyz[0, 0] + v * (duxyz[1, 1] + duxyz[2, 2]) );
+            res[1] = lam * ( (1 - v) * duxyz[1, 1] + v * (duxyz[0, 0] + duxyz[2, 2]) );
+            res[2] = lam * ( (1 - v) * duxyz[2, 2] + v * (duxyz[0, 0] + duxyz[1, 1]) );
+            res[3] = mu * (duxyz[0, 1] + duxyz[1, 0]);
+            res[4] = mu * (duxyz[1, 2] + duxyz[2, 1]);
+            res[5] = mu * (duxyz[0, 2] + duxyz[2, 0]);
 
             return res;
         }
