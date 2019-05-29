@@ -1,6 +1,14 @@
 ﻿namespace FEM.DTO
 {
-    class Parameters
+    public class Pressure {
+        public Pressure () {}
+
+        public int fe { get; set; }
+        public int part { get; set; }
+        public double pressure { get; set; }
+    }
+
+    public class Parameters
     {
         public Parameters() {}
 
@@ -15,5 +23,7 @@
         public double puasson { get; set; }
         public double jung { get; set; }
         public double pressure { get; set; }
+
+        public Pressure[] pr { get; set; }
     }
 }
