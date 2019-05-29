@@ -25,7 +25,7 @@ namespace FEM
         public double v;
         public double lam;
         public double mu;
-        public double presure;
+        public Pressure[] pressuredPart;
 
         public double[][] AKT;
         public int[][] NT;
@@ -69,7 +69,7 @@ namespace FEM
 
             v = parameters.puasson;
             E = parameters.jung;
-            presure = parameters.pressure;
+            pressuredPart = parameters.pr;
 
             lam = E / ((1 + v) * (1 - 2 * v));
             mu = E / (2 * (1 + v));
@@ -111,16 +111,17 @@ namespace FEM
         }
         private void createZP()
         {
-            int loadElementsCount = m * n;
-            ZP = new double[loadElementsCount][];
-            int firstOne = nel - loadElementsCount;
-            for (int i = firstOne, counter = 0; i < nel; i++, counter++)
-            {
-                ZP[counter] = new double[3];
+            int pressuredPartsCount = pressuredPart.Length;
 
-                ZP[counter][0] = i;
-                ZP[counter][1] = 5;
-                ZP[counter][2] = presure;
+            ZP = new double[pressuredPartsCount][];
+            for (int i = 0; i < pressuredPartsCount; i++)
+            {
+                Pressure load = pressuredPart[i];
+                ZP[i] = new double[3];
+
+                ZP[i][0] = load.fe;
+                ZP[i][1] = load.part;
+                ZP[i][2] = load.pressure;
             }
         }
 
