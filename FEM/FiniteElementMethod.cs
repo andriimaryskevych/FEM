@@ -56,6 +56,7 @@ namespace FEM
         public int[] ZU;
         public double[][] ZP;
 
+        private double[][] J;
         private double[][] TENSOR;
 
         public FiniteElementMethod(Parameters parameters, Mesh mesh)
@@ -605,6 +606,7 @@ namespace FEM
 
             double[][] sigma = new double[nqp][];
 
+            J = new double[nqp][];
             TENSOR = new double[nqp][];
 
             double[] amount = new double[nqp];
@@ -728,7 +730,12 @@ namespace FEM
 
             for (int i = 0; i < nqp; i++)
             {
-                TENSOR[i] = getMainPressure(sigma[i]);
+                J[i] = getMainPressure(sigma[i]);
+            }
+
+            for (int i = 0; i < nqp; i++)
+            {
+                TENSOR[i] = Cubuc.Solve(1, -J[i][0], J[i][1], -J[i][2]);
             }
         }
 
