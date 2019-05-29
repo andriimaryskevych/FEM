@@ -22,7 +22,7 @@ namespace FEM.Interfaces.ParameterExtractor
             parameters.puasson = 0.3;
             parameters.jung = 1;
 
-            parameters.pr = new Pressure[1] {
+            parameters.load = new Pressure[1] {
                 new Pressure() { fe = totalCount - 1, part = 5, pressure = -0.3 }
             };
 

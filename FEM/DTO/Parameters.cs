@@ -22,6 +22,6 @@
 
         public double puasson { get; set; }
         public double jung { get; set; }
-        public Pressure[] pr { get; set; }
+        public Pressure[] load { get; set; }
     }
 }

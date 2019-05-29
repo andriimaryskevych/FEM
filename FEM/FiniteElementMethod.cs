@@ -69,7 +69,7 @@ namespace FEM
 
             v = parameters.puasson;
             E = parameters.jung;
-            pressuredPart = parameters.pr;
+            pressuredPart = parameters.load;
 
             lam = E / ((1 + v) * (1 - 2 * v));
             mu = E / (2 * (1 + v));
