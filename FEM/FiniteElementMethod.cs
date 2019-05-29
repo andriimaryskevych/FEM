@@ -604,10 +604,10 @@ namespace FEM
                 SUM[i] = new double[3,3];
             }
 
-            double[][] sigma = new double[nqp][];
-
-            J = new double[nqp][];
-            TENSOR = new double[nqp][];
+            double[][] sigma;
+            sigma =     new double[nqp][];
+            J =         new double[nqp][];
+            TENSOR =    new double[nqp][];
 
             double[] amount = new double[nqp];
             int[] coordinates;
@@ -736,6 +736,10 @@ namespace FEM
             for (int i = 0; i < nqp; i++)
             {
                 TENSOR[i] = Cubic.Solve(1, -J[i][0], J[i][1], -J[i][2]);
+
+                Console.Write("Vertex number {0} ", i);
+                Console.Write("{0} {1} {2}", TENSOR[i][0], TENSOR[i][1], TENSOR[i][2]);
+                Console.WriteLine();
             }
         }
 

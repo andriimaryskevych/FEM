@@ -13,9 +13,9 @@ namespace FEM.Interfaces.ParameterExtractor
             parameters.sizeY = 100;
             parameters.sizeZ = 100;
 
-            parameters.xAxisFEMCount = 3;
-            parameters.yAxisFEMCount = 3;
-            parameters.zAxisFEMCount = 3;
+            parameters.xAxisFEMCount = 1;
+            parameters.yAxisFEMCount = 1;
+            parameters.zAxisFEMCount = 10;
 
             int totalCount = parameters.xAxisFEMCount * parameters.yAxisFEMCount * parameters.zAxisFEMCount;
 
@@ -23,7 +23,7 @@ namespace FEM.Interfaces.ParameterExtractor
             parameters.jung = 1;
 
             parameters.load = new Pressure[1] {
-                new Pressure() { fe = totalCount - 1, part = 5, pressure = -0.3 }
+                new Pressure() { fe = totalCount - 1, part = 5, pressure = -3 }
             };
 
             return parameters;
