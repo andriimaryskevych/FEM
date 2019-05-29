@@ -757,11 +757,29 @@ namespace FEM
         {
             double[] res = new double[3];
 
-            res[0] = sigma[0] + sigma[1] + sigma[2];
-            res[1] = sigma[0] * sigma[1] + sigma[0] * sigma[2] + sigma[1] * sigma[2] -
-                (Math.Pow(sigma[3], 2) + Math.Pow(sigma[4], 2) + Math.Pow(sigma[5], 2));
-            res[2] = sigma[0] * sigma[1] * sigma[2] + 2 * sigma[3] * sigma[4] * sigma[5] -
-                ( sigma[0] * Math.Pow(sigma[4], 2) + sigma[1] * Math.Pow(sigma[5], 2) + sigma[2] * Math.Pow(sigma[3], 2));
+            res[0] =
+                sigma[0] +
+                sigma[1] +
+                sigma[2];
+
+            res[1] =
+                sigma[0] * sigma[1] +
+                sigma[0] * sigma[2] +
+                sigma[1] * sigma[2] -
+                (
+                    Math.Pow(sigma[3], 2) +
+                    Math.Pow(sigma[4], 2) +
+                    Math.Pow(sigma[5], 2)
+                );
+
+            res[2] =
+                sigma[0] * sigma[1] * sigma[2] +
+                sigma[3] * sigma[4] * sigma[5] * 2 -
+                (
+                    sigma[0] * Math.Pow(sigma[4], 2) +
+                    sigma[1] * Math.Pow(sigma[5], 2) +
+                    sigma[2] * Math.Pow(sigma[3], 2)
+                );
 
             return res;
         }
