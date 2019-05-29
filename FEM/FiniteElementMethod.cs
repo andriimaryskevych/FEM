@@ -735,7 +735,7 @@ namespace FEM
 
             for (int i = 0; i < nqp; i++)
             {
-                TENSOR[i] = Cubuc.Solve(1, -J[i][0], J[i][1], -J[i][2]);
+                TENSOR[i] = Cubic.Solve(1, -J[i][0], J[i][1], -J[i][2]);
             }
         }
 

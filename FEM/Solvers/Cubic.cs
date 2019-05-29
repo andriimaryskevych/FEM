@@ -5,7 +5,7 @@ using MathNet.Numerics;
 
 namespace FEM.Solvers
 {
-    class Cubuc
+    class Cubic
     {
         public static double[] Solve(double a, double b, double c, double d)
         {
