@@ -15,18 +15,6 @@ namespace FEM.Solvers
             Complex root2 = roots.Item2;
             Complex root3 = roots.Item3;
 
-            double[] arr = new double[3] {
-                root1.Imaginary,
-                root2.Imaginary,
-                root3.Imaginary
-            };
-
-            foreach (double ccc in arr) {
-                if (ccc != 0) {
-                    Console.WriteLine("Error");
-                }
-            }
-
             double[] res = new double[3] {
                 root1.Real,
                 root2.Real,

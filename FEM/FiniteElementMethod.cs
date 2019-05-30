@@ -56,7 +56,6 @@ namespace FEM
         public int[] ZU;
         public double[][] ZP;
 
-        private double[][] J;
         private double[][] TENSOR;
 
         public FiniteElementMethod(Parameters parameters, Mesh mesh)
@@ -596,18 +595,17 @@ namespace FEM
             // defined once and used for each finite element
             double[,,] dxyzabg = new double[3, 3, 20];
             double[,,] dfixyz = new double[20, 20, 3];
-            double[,,] duxyz = new double[20, 3, 3];
+            double[][,] duxyz = new double[20][,];
+
+            TENSOR = new double[nqp][];
 
             double[][,] SUM = new double[nqp][,];
             for (int i = 0; i < nqp; i++)
             {
                 SUM[i] = new double[3,3];
+                TENSOR[i] = new double[3];
             }
 
-            double[][] sigma;
-            sigma =     new double[nqp][];
-            J =         new double[nqp][];
-            TENSOR =    new double[nqp][];
 
             double[] amount = new double[nqp];
             int[] coordinates;
@@ -625,6 +623,10 @@ namespace FEM
             // Fill sum matrix
             for (int number = 0; number < nel; number++)
             {
+                double[][] sigma =      new double[20][];
+                double[][] J =          new double[20][];
+                double[][] TENSOR_E =   new double[20][];
+
                 coordinates = NT[number];
 
                 // calc dxyzabg
@@ -684,6 +686,8 @@ namespace FEM
                 // calc duxyz
                 for (int i = 0; i < 20; i++)
                 {
+                    duxyz[i] = new double[3, 3];
+
                     for (int j = 0; j < 3; j++)
                     {
                         for (int k = 0; k < 3; k++)
@@ -693,49 +697,37 @@ namespace FEM
                             {
                                 sum += U[coordinates[l] * 3 + j] * dfixyz[i, l, k];
                             }
-                            duxyz[i, j, k] = sum;
+
+                            duxyz[i][j, k] = sum;
                         }
                     }
                 }
 
-                // calc all sums: in each global point add all 9 values
                 for (int i = 0; i < 20; i++)
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        for (int k = 0; k < 3; k++)
-                        {
-                            SUM[coordinates[i]][j, k] += duxyz[i, j, k];
-                        }
-                    }
+                    sigma[i] = getSigma(duxyz[i]);
                 }
-            }
 
-            // get the avarage for each point
-            for (int i = 0; i < nqp; i++)
-            {
-                for (int j = 0; j < 3; j++)
+                for (int i = 0; i < 20; i++)
                 {
-                    for (int k = 0; k < 3; k++)
-                    {
-                        SUM[i][j, k] /= amount[i];
-                    }
+                    J[i] = getMainPressure(sigma[i]);
+                }
+
+                for (int i = 0; i < 20; i++)
+                {
+                    TENSOR_E[i] = Cubic.Solve(1, -J[i][0], J[i][1], -J[i][2]);
+
+                    TENSOR[coordinates[i]][0] += TENSOR_E[i][0];
+                    TENSOR[coordinates[i]][1] += TENSOR_E[i][1];
+                    TENSOR[coordinates[i]][2] += TENSOR_E[i][2];
                 }
             }
 
             for (int i = 0; i < nqp; i++)
             {
-                sigma[i] = getSigma(SUM[i]);
-            }
-
-            for (int i = 0; i < nqp; i++)
-            {
-                J[i] = getMainPressure(sigma[i]);
-            }
-
-            for (int i = 0; i < nqp; i++)
-            {
-                TENSOR[i] = Cubic.Solve(1, -J[i][0], J[i][1], -J[i][2]);
+                TENSOR[i][0] /= amount[i];
+                TENSOR[i][1] /= amount[i];
+                TENSOR[i][2] /= amount[i];
 
                 Console.Write("Vertex number {0} ", i);
                 Console.Write("{0} {1} {2}", TENSOR[i][0], TENSOR[i][1], TENSOR[i][2]);

@@ -13,9 +13,9 @@ namespace FEM.Interfaces.ParameterExtractor
             parameters.sizeY = 100;
             parameters.sizeZ = 100;
 
-            parameters.xAxisFEMCount = 1;
-            parameters.yAxisFEMCount = 1;
-            parameters.zAxisFEMCount = 10;
+            parameters.xAxisFEMCount = 3;
+            parameters.yAxisFEMCount = 3;
+            parameters.zAxisFEMCount = 3;
 
             int totalCount = parameters.xAxisFEMCount * parameters.yAxisFEMCount * parameters.zAxisFEMCount;
 
