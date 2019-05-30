@@ -582,7 +582,6 @@ namespace FEM
             }
 
             timer.LogTime("Generated points.txt");
-            global.LogTime("Finished solving");
         }
 
         private void createPressureVector()
@@ -733,6 +732,9 @@ namespace FEM
                 Console.Write("{0} {1} {2}", TENSOR[i][0], TENSOR[i][1], TENSOR[i][2]);
                 Console.WriteLine();
             }
+
+            timer.LogTime("Calculated tensor");
+            global.LogTime("Finished solving");
         }
 
         private double[] getSigma(double[,] duxyz)
