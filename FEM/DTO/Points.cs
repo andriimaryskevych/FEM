@@ -5,5 +5,7 @@ namespace FEM.DTO
         public double[][] AKT;
         public int[][] NT;
         public double[] STRESS;
+
+        public double maxStress { get; set; }
     }
 }

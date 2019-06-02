@@ -58,6 +58,7 @@ namespace FEM
 
         private double[][] TENSOR;
         private double[] STRESS;
+        private double maxStress = 0;
 
         public FiniteElementMethod(Parameters parameters, Mesh mesh)
         {
@@ -718,6 +719,10 @@ namespace FEM
                 }
 
                 STRESS[i] = sum;
+
+                if (STRESS[i] > maxStress) {
+                    maxStress = STRESS[i];
+                }
             }
 
             timer.LogTime("Calculated tensor");
@@ -781,7 +786,7 @@ namespace FEM
 
             using (StreamWriter sw = new StreamWriter("points.txt", false, System.Text.Encoding.Default))
             {
-                sw.WriteLine(JsonConvert.SerializeObject(new Points() { NT = NT, AKT = AKTres, STRESS = STRESS }));
+                sw.WriteLine(JsonConvert.SerializeObject(new Points() { NT = NT, AKT = AKTres, STRESS = STRESS, maxStress = maxStress }));
             }
 
             timer.LogTime("Generated points.txt");
