@@ -4,5 +4,6 @@ namespace FEM.DTO
     {
         public double[][] AKT;
         public int[][] NT;
+        public double[][] TENSOR;
     }
 }

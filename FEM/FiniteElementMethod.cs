@@ -96,8 +96,8 @@ namespace FEM
             fastenNodes();
             createF();
             getResult();
-            returnEndPositions();
             createPressureVector();
+            returnEndPositions();
         }
 
         private void createZU()
@@ -566,24 +566,6 @@ namespace FEM
             timer.LogTime("Solved Ax=B");
         }
 
-        private void returnEndPositions ()
-        {
-            double[][] AKTres = new double[nqp][];
-            for (int i = 0; i < nqp; i++)
-            {
-                double[] prev = AKT[i];
-                double[] point = U.Skip(i * 3).Take(3).ToArray();
-                AKTres[i] = new double[3] { Math.Round(prev[0] + point[0], 4), Math.Round(prev[1] + point[1], 4), Math.Round(prev[2] + point[2], 4) };
-            }
-
-            using (StreamWriter sw = new StreamWriter("points.txt", false, System.Text.Encoding.Default))
-            {
-                sw.WriteLine(JsonConvert.SerializeObject(new Points() { NT = NT, AKT = AKT }));
-            }
-
-            timer.LogTime("Generated points.txt");
-        }
-
         private void createPressureVector()
         {
             // Currently I have MG, F and U calculated
@@ -727,14 +709,9 @@ namespace FEM
                 TENSOR[i][0] /= amount[i];
                 TENSOR[i][1] /= amount[i];
                 TENSOR[i][2] /= amount[i];
-
-                Console.Write("Vertex number {0} ", i);
-                Console.Write("{0} {1} {2}", TENSOR[i][0], TENSOR[i][1], TENSOR[i][2]);
-                Console.WriteLine();
             }
 
             timer.LogTime("Calculated tensor");
-            global.LogTime("Finished solving");
         }
 
         private double[] getSigma(double[,] duxyz)
@@ -780,6 +757,26 @@ namespace FEM
                 );
 
             return res;
+        }
+
+        private void returnEndPositions ()
+        {
+            double[][] AKTres = new double[nqp][];
+
+            for (int i = 0; i < nqp; i++)
+            {
+                double[] prev = AKT[i];
+                double[] point = U.Skip(i * 3).Take(3).ToArray();
+                AKTres[i] = new double[3] { Math.Round(prev[0] + point[0], 4), Math.Round(prev[1] + point[1], 4), Math.Round(prev[2] + point[2], 4) };
+            }
+
+            using (StreamWriter sw = new StreamWriter("points.txt", false, System.Text.Encoding.Default))
+            {
+                sw.WriteLine(JsonConvert.SerializeObject(new Points() { NT = NT, AKT = AKTres, TENSOR = TENSOR }));
+            }
+
+            timer.LogTime("Generated points.txt");
+            global.LogTime("Finished solving");
         }
     }
 }
