@@ -578,7 +578,7 @@ namespace FEM
 
             using (StreamWriter sw = new StreamWriter("points.txt", false, System.Text.Encoding.Default))
             {
-                sw.WriteLine(JsonConvert.SerializeObject(new Points(AKTres, NT)));
+                sw.WriteLine(JsonConvert.SerializeObject(new Points() { NT = NT, AKT = AKT }));
             }
 
             timer.LogTime("Generated points.txt");

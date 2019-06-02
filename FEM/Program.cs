@@ -25,7 +25,7 @@ namespace FEM
 
             using (StreamWriter sw = new StreamWriter("start.txt", false, System.Text.Encoding.Default))
             {
-                sw.WriteLine(JsonConvert.SerializeObject(new Points(mesh.AKT, mesh.NT)));
+                sw.WriteLine(JsonConvert.SerializeObject(new Points() { NT = mesh.NT, AKT = mesh.AKT }));
             }
 
             Console.WriteLine("start.txt");
