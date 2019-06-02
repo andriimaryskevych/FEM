@@ -57,6 +57,7 @@ namespace FEM
         public double[][] ZP;
 
         private double[][] TENSOR;
+        private double[] STRESS;
 
         public FiniteElementMethod(Parameters parameters, Mesh mesh)
         {
@@ -579,6 +580,7 @@ namespace FEM
             double[][,] duxyz = new double[20][,];
 
             TENSOR = new double[nqp][];
+            STRESS = new double[nqp];
 
             double[][,] SUM = new double[nqp][,];
             for (int i = 0; i < nqp; i++)
@@ -709,6 +711,13 @@ namespace FEM
                 TENSOR[i][0] /= amount[i];
                 TENSOR[i][1] /= amount[i];
                 TENSOR[i][2] /= amount[i];
+
+                double sum = 0;
+                for (int j = 0; j < 3; j++) {
+                    sum += Math.Abs(TENSOR[i][j]);
+                }
+
+                STRESS[i] = sum;
             }
 
             timer.LogTime("Calculated tensor");
@@ -772,7 +781,7 @@ namespace FEM
 
             using (StreamWriter sw = new StreamWriter("points.txt", false, System.Text.Encoding.Default))
             {
-                sw.WriteLine(JsonConvert.SerializeObject(new Points() { NT = NT, AKT = AKTres, TENSOR = TENSOR }));
+                sw.WriteLine(JsonConvert.SerializeObject(new Points() { NT = NT, AKT = AKTres, STRESS = STRESS }));
             }
 
             timer.LogTime("Generated points.txt");
