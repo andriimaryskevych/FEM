@@ -21,7 +21,7 @@
         public int zAxisFEMCount { get; set; }
 
         public double puasson { get; set; }
-        public double jung { get; set; }
+        public double young { get; set; }
         public Pressure[] load { get; set; }
     }
 }

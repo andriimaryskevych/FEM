@@ -70,7 +70,7 @@ namespace FEM
             k = parameters.zAxisFEMCount;
 
             v = parameters.puasson;
-            E = parameters.jung;
+            E = parameters.young;
             pressuredPart = parameters.load;
 
             lam = E / ((1 + v) * (1 - 2 * v));

@@ -20,7 +20,7 @@ namespace FEM.Interfaces.ParameterExtractor
             int totalCount = parameters.xAxisFEMCount * parameters.yAxisFEMCount * parameters.zAxisFEMCount;
 
             parameters.puasson = 0.3;
-            parameters.jung = 1;
+            parameters.young = 1;
 
             parameters.load = new Pressure[1] {
                 new Pressure() { fe = totalCount - 1, part = 5, pressure = -3 }
