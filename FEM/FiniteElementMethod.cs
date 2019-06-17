@@ -573,16 +573,11 @@ namespace FEM
             {
                 tw.WriteLine(nqp * 3);
 
-                for (int i = 0; i < size; i++)
-                {
-                    for (int j = 0; j < size; j++)
-                    {
-                        if (Math.Round(MG[i, j], 4) != 0) {
-                            tw.WriteLine("{0} {1} {2}", i, j, MG[i, j]);
-                        }
+                foreach (RowColumnValueTriplet<double> a in MG.NonzeroElements) {
+                    if (Math.Round(a.Value, 4) != 0) {
+                        tw.WriteLine("{0} {1} {2}", a.Row, a.Column, a.Value);
                     }
                 }
-
             }
 
             using (TextWriter tw = new StreamWriter("F.txt"))
