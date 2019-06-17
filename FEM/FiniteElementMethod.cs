@@ -99,7 +99,7 @@ namespace FEM
             fastenNodes();
             createF();
             exportMG_F();
-            // visualizeMG();
+            visualizeMG();
             getResult();
             createPressureVector();
             returnEndPositions();
@@ -571,17 +571,16 @@ namespace FEM
 
             using (TextWriter tw = new StreamWriter("MG.txt"))
             {
-                tw.Write(nqp * 3);
-                tw.WriteLine();
+                tw.WriteLine(nqp * 3);
 
                 for (int i = 0; i < size; i++)
                 {
                     for (int j = 0; j < size; j++)
                     {
-                        tw.Write(MG[i, j]+ " ");
+                        if (Math.Round(MG[i, j], 4) != 0) {
+                            tw.WriteLine("{0} {1} {2}", i, j, MG[i, j]);
+                        }
                     }
-
-                    tw.WriteLine();
                 }
 
             }
@@ -599,7 +598,7 @@ namespace FEM
                 tw.WriteLine();
             }
 
-            Environment.Exit(1);
+            // Environment.Exit(1);
         }
 
         private void visualizeMG () {
@@ -620,7 +619,9 @@ namespace FEM
             }
 
             bmp.Save("MG.bmp");
-            Console.WriteLine("Saved image");
+            timer.LogTime("Saved image");
+
+            Environment.Exit(1);
         }
 
         private void getResult()
