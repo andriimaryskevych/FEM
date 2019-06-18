@@ -1,0 +1,40 @@
+Solve MGx = b
+MG is 14883x14883 with 841245 nonzeros.
+
+BiConjugateGradient solved system
+in 00:00:04.18
+used 423 iterations.
+Estimated error: 6.84231046222961E-10
+
+BiConjugateGradientStabilized solved system
+in 00:00:02.92
+used 283 iterations.
+Estimated error: 6.11340086080743E-10
+
+ConjugateGradient solved system
+in 00:00:08.63
+used 1841 iterations.
+Estimated error: 8.02632494040744E-10
+
+ConjugateGradientSquared solved system
+in 00:01:14.20
+used 8192 iterations.
+Estimated error: 0.000196512219964196
+
+Unable to cast object of type 'AY[System.Double]' to type 'Extreme.JIB`1[System.Double]'.
+GeneralizedMinimalResidual solved system
+in 00:01:05.65
+used 8192 iterations.
+Estimated error: 0.0285872390090806
+
+QuasiMinimalResidual solved system
+in 00:00:04.03
+used 369 iterations.
+Estimated error: 5.11887090905264E-11
+
+Jacobi solved system
+in 00:00:46.20
+used 8192 iterations.
+Estimated error: 1E+30
+
+Unable to cast object of type 'AY[System.Double]' to type 'Extreme.JIB`1[System.Double]'.

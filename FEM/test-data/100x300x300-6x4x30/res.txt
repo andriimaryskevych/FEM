@@ -1,0 +1,41 @@
+Program.cs(37,36): warning CS0219: The variable 'res' is assigned but its value is never used [/home/andrii/projects/university/test/extreme/extreme.csproj]
+Solve MGx = b
+MG is 11799x11799 with 633683 nonzeros.
+
+BiConjugateGradient solved system
+in 00:00:10.74
+used 1312 iterations.
+Estimated error: 7.15154088668256E-10
+
+BiConjugateGradientStabilized solved system
+in 00:00:11.18
+used 1521 iterations.
+Estimated error: 3.35852260124064E-10
+
+ConjugateGradient solved system
+in 00:00:17.82
+used 4815 iterations.
+Estimated error: 9.01678104208394E-10
+
+ConjugateGradientSquared solved system
+in 00:00:07.82
+used 1082 iterations.
+Estimated error: 6.99265021236736E-10
+
+Unable to cast object of type 'AY[System.Double]' to type 'Extreme.JIB`1[System.Double]'.
+GeneralizedMinimalResidual solved system
+in 00:00:40.31
+used 8192 iterations.
+Estimated error: 0.133869485762627
+
+QuasiMinimalResidual solved system
+in 00:00:09.94
+used 1163 iterations.
+Estimated error: 8.12617388782306E-10
+
+Jacobi solved system
+in 00:00:30.42
+used 8192 iterations.
+Estimated error: 1E+30
+
+Unable to cast object of type 'AY[System.Double]' to type 'Extreme.JIB`1[System.Double]'.
